@@ -24,7 +24,12 @@ export async function POST(request: Request) {
       id: { in: ids },
       isActive: true,
       isAvailable: true,
-      isSetBuilderEnabled: true
+      isSetBuilderEnabled: true,
+      category: { slug: { notIn: ["sets", "drinks"] } },
+      NOT: [
+        { name: { contains: "соус", mode: "insensitive" } },
+        { name: { contains: "халапеньо", mode: "insensitive" } }
+      ]
     }
   });
   const rule = await prisma.setBuilderRule.findFirst({ where: { isActive: true } });

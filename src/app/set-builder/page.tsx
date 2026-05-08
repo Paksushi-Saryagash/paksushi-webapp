@@ -8,8 +8,7 @@ export default async function SetBuilderPage() {
   const categories = await prisma.menuCategory.findMany({
     where: {
       isActive: true,
-      slug: { not: "sets" },
-      name: { notIn: ["Сеты", "Сет", "Sets"] }
+      slug: { notIn: ["sets", "drinks"] }
     },
     orderBy: { sortOrder: "asc" },
     select: {
@@ -20,7 +19,11 @@ export default async function SetBuilderPage() {
         where: {
           isActive: true,
           isAvailable: true,
-          isSetBuilderEnabled: true
+          isSetBuilderEnabled: true,
+          NOT: [
+            { name: { contains: "соус", mode: "insensitive" } },
+            { name: { contains: "халапеньо", mode: "insensitive" } }
+          ]
         },
         orderBy: { name: "asc" },
         select: {

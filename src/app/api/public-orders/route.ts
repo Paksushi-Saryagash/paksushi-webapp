@@ -27,7 +27,16 @@ export async function POST(request: Request) {
       id: { in: body.data.items.map((item) => item.menuItemId) },
       isActive: true,
       isAvailable: true,
-      ...(body.data.orderType === "CUSTOM_SET" ? { isSetBuilderEnabled: true } : {})
+      ...(body.data.orderType === "CUSTOM_SET"
+        ? {
+            isSetBuilderEnabled: true,
+            category: { slug: { notIn: ["sets", "drinks"] } },
+            NOT: [
+              { name: { contains: "соус", mode: "insensitive" as const } },
+              { name: { contains: "халапеньо", mode: "insensitive" as const } }
+            ]
+          }
+        : {})
     }
   });
   const rule = await prisma.setBuilderRule.findFirst({ where: { isActive: true } });
