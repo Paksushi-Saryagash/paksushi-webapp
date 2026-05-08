@@ -2179,6 +2179,35 @@ const menuItems = [
   }
 ] as const;
 
+const obsoleteSeedItemIds = [
+  "seed-set-hit",
+  "seed-set-family",
+  "seed-set-baked",
+  "seed-set-mini",
+  "seed-sushi-philadelphia",
+  "seed-sushi-california",
+  "seed-sushi-canada",
+  "seed-sushi-tempura",
+  "seed-sushi-baked-salmon",
+  "seed-sushi-baked-chicken",
+  "seed-sushi-ebi",
+  "seed-sushi-sake-maki",
+  "seed-sushi-kappa-maki",
+  "seed-pizza-pepperoni",
+  "seed-pizza-margarita",
+  "seed-pizza-chicken",
+  "seed-pizza-4cheese",
+  "seed-pizza-assorti",
+  "seed-snack-fries",
+  "seed-snack-nuggets",
+  "seed-snack-cheese-sticks",
+  "seed-snack-wings",
+  "seed-drink-cola",
+  "seed-drink-fanta",
+  "seed-drink-sprite",
+  "seed-drink-water"
+] as const;
+
 async function main() {
   const ownerPasswordHash = await bcrypt.hash("owner12345", 12);
   const operatorPasswordHash = await bcrypt.hash("operator12345", 12);
@@ -2218,6 +2247,15 @@ async function main() {
     select: { id: true, slug: true }
   });
   const categoryBySlug = new Map(categoryRows.map((category) => [category.slug, category.id]));
+
+  await prisma.menuItem.updateMany({
+    where: { id: { in: [...obsoleteSeedItemIds] } },
+    data: {
+      isActive: false,
+      isAvailable: false,
+      isSetBuilderEnabled: false
+    }
+  });
 
   for (const item of menuItems) {
     const categoryId = categoryBySlug.get(item.categorySlug);
