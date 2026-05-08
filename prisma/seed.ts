@@ -2183,7 +2183,7 @@ async function main() {
   const ownerPasswordHash = await bcrypt.hash("owner12345", 12);
   const operatorPasswordHash = await bcrypt.hash("operator12345", 12);
 
-  const owner = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { login: "owner" },
     update: {},
     create: {
@@ -2259,15 +2259,6 @@ async function main() {
       threshold: 1,
       isActive: true,
       useSetPriceSum: true
-    }
-  });
-
-  await prisma.auditLog.create({
-    data: {
-      actorId: owner.id,
-      action: "CREATE_MENU_ITEM",
-      entityType: "seed",
-      details: { message: "Pak Sushi menu seed completed", itemCount: menuItems.length }
     }
   });
 }
