@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  OPERATOR
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  COOKING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
+enum OrderSource {
+  WHATSAPP
+  INSTAGRAM
+  PHONE
+  WALK_IN
+  OTHER
+}
+
+enum OrderType {
+  REGULAR
+  CUSTOM_SET
+  MIXED
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+  OPEN_SHIFT
+  CLOSE_SHIFT
+  CREATE_USER
+  UPDATE_USER
+  DELETE_USER
+  DEACTIVATE_USER
+  CREATE_CATEGORY
+  UPDATE_CATEGORY
+  DELETE_CATEGORY
+  CREATE_MENU_ITEM
+  UPDATE_MENU_ITEM
+  DELETE_MENU_ITEM
+  CREATE_ORDER
+  UPDATE_ORDER
+  CANCEL_ORDER
+  REFUND_ORDER
+  MARK_PAID
+  UPDATE_SET_RULE
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  login        String     @unique
+  passwordHash String
+  role         UserRole
+  isActive     Boolean    @default(true)
+  orders       Order[]    @relation("OrderCreator")
+  shifts       Shift[]    @relation("ShiftOperator")
+  auditLogs    AuditLog[] @relation("AuditActor")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Shift {
+  id            String    @id @default(cuid())
+  operatorId    String
+  operator      User      @relation("ShiftOperator", fields: [operatorId], references: [id])
+  openedAt      DateTime  @default(now())
+  closedAt      DateTime?
+  openingNote   String?
+  closingNote   String?
+  startingCash  Int       @default(0)
+  endingCash    Int?
+  orderCount    Int       @default(0)
+  revenueTotal  Int       @default(0)
+  refundTotal   Int       @default(0)
+  isOpen        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([operatorId])
+  @@index([openedAt])
+  @@index([isOpen])
+}
+
+model MenuCategory {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  sortOrder Int        @default(0)
+  isActive  Boolean    @default(true)
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model MenuItem {
+  id                  String        @id @default(cuid())
+  name                String
+  description         String?
+  categoryId          String
+  category            MenuCategory  @relation(fields: [categoryId], references: [id])
+  imageUrl            String?
+  sellingPrice        Int
+  costPrice           Int
+  setBuilderPrice     Int
+  weight              String?
+  ingredients         String?
+  isAvailable         Boolean       @default(true)
+  isActive            Boolean       @default(true)
+  isSetBuilderEnabled Boolean       @default(false)
+  orderItems          OrderItem[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@index([categoryId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     Int           @unique @default(autoincrement())
+  type            OrderType     @default(REGULAR)
+  status          OrderStatus   @default(NEW)
+  paymentStatus   PaymentStatus @default(UNPAID)
+  source          OrderSource   @default(WHATSAPP)
+  customerName    String?
+  customerPhone   String?
+  customerAddress String?
+  comment         String?
+  cancelReason    String?
+  subtotal        Int
+  totalRevenue    Int
+  totalCost       Int
+  totalProfit     Int
+  createdById     String
+  createdBy       User          @relation("OrderCreator", fields: [createdById], references: [id])
+  items           OrderItem[]
+  payments        Payment[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+  @@index([createdById])
+}
+
+model OrderItem {
+  id                       String   @id @default(cuid())
+  orderId                  String
+  order                    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId               String?
+  menuItem                 MenuItem? @relation(fields: [menuItemId], references: [id])
+  nameSnapshot             String
+  quantity                 Int
+  sellingPriceSnapshot     Int
+  costPriceSnapshot        Int
+  setBuilderPriceSnapshot  Int
+  finalUnitPrice           Int
+  lineRevenue              Int
+  lineCost                 Int
+  lineProfit               Int
+  createdAt                DateTime @default(now())
+
+  @@index([orderId])
+  @@index([menuItemId])
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount    Int
+  method    String   @default("cash")
+  paidAt    DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model SetBuilderRule {
+  id             String   @id @default(cuid())
+  name           String
+  threshold      Int      @default(5000)
+  isActive       Boolean  @default(true)
+  useSetPriceSum Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AuditLog {
+  id         String      @id @default(cuid())
+  actorId    String?
+  actor      User?       @relation("AuditActor", fields: [actorId], references: [id])
+  action     AuditAction
+  entityType String
+  entityId   String?
+  details    Json?
+  createdAt  DateTime    @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}

@@ -1,0 +1,11 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="80" cy="80" r="76" fill="#FFE019"/>
+  <path d="M41 101C48 74 73 50 111 43C122 41 132 44 138 52C119 56 106 65 98 78C88 95 71 105 41 101Z" fill="#168C3B" opacity="0.9"/>
+  <path d="M29 104C44 92 56 85 74 86C92 87 104 98 124 94" stroke="#0F7F34" stroke-width="7" stroke-linecap="round"/>
+  <path d="M33 92C50 80 67 77 84 82C99 86 114 84 129 74" stroke="#D5222C" stroke-width="6" stroke-linecap="round"/>
+  <text x="24" y="72" font-family="Arial Black, Impact, sans-serif" font-size="31" font-weight="900" fill="#0F7F34" transform="rotate(-9 24 72)">PAK</text>
+  <text x="25" y="106" font-family="Arial Black, Impact, sans-serif" font-size="33" font-weight="900" fill="#D5222C" transform="rotate(-9 25 106)">SUSHI</text>
+  <circle cx="111" cy="31" r="5" fill="#D5222C"/>
+  <rect x="106" y="22" width="10" height="6" rx="3" fill="white"/>
+  <path d="M103 28C99 24 95 23 91 24" stroke="white" stroke-width="4" stroke-linecap="round"/>
+</svg>

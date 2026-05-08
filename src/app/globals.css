@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --pak-ink: #15110f;
+  --pak-red: #c6262e;
+  --pak-cream: #fff9e8;
+  --pak-yellow: #ffe11f;
+  --pak-green: #17833b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 225, 31, 0.08), transparent 340px),
+    var(--pak-cream);
+  color: var(--pak-ink);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.pressable {
+  transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease, color 150ms ease;
+}
+
+.pressable:hover {
+  transform: translateY(-1px);
+}
+
+.pressable:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.admin-shell button,
+.admin-shell a,
+.admin-shell select {
+  transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.admin-shell button:hover,
+.admin-shell a:hover {
+  transform: translateY(-1px);
+}
+
+.admin-shell button:active,
+.admin-shell a:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.admin-shell button:focus-visible,
+.admin-shell a:focus-visible,
+.admin-shell input:focus-visible,
+.admin-shell select:focus-visible,
+.admin-shell textarea:focus-visible {
+  outline: 3px solid rgba(255, 225, 31, 0.72);
+  outline-offset: 2px;
+}
+
+.brand-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 63% 68%, var(--pak-green) 0 22%, transparent 23%),
+    var(--pak-yellow);
+}
+
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  inset: 24% 13% 12% 42%;
+  border-radius: 999px 999px 20px 20px;
+  background: rgba(23, 131, 59, 0.92);
+  transform: rotate(-18deg);
+}
+
+.brand-mark-text {
+  position: relative;
+  z-index: 1;
+  color: #0f6b2f;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 1px 1px 0 #f13b2f;
+  transform: rotate(-8deg);
+}
+
+.set-unlocked {
+  animation: setPulse 850ms ease both;
+}
+
+.price-pop {
+  animation: pricePop 360ms ease both;
+}
+
+.sparkle-badge {
+  animation: sparkleFloat 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes setPulse {
+  0% {
+    transform: scale(0.98);
+    box-shadow: 0 0 0 rgba(23, 131, 59, 0);
+  }
+  45% {
+    transform: scale(1.025);
+    box-shadow: 0 18px 45px rgba(23, 131, 59, 0.28);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pricePop {
+  0% {
+    transform: translateY(8px) scale(0.96);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes sparkleFloat {
+  from {
+    transform: translateY(0) rotate(-2deg);
+  }
+  to {
+    transform: translateY(-3px) rotate(2deg);
+  }
+}
+
+.receipt {
+  width: 80mm;
+  color: #111;
+  background: #fff;
+  padding: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .receipt-page {
+    min-height: auto !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .receipt {
+    width: 80mm;
+    margin: 0;
+    padding: 4mm;
+    box-shadow: none;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
