@@ -38,7 +38,32 @@ export default async function AdminMenuPage() {
           <h2 className="text-lg font-black">Категории</h2>
           <p className="mt-1 text-sm text-black/55">Категории управляют вкладками на публичном меню.</p>
         </div>
-        <div className="mt-4 overflow-auto">
+        <div className="mt-4 grid gap-3 md:hidden">
+          {categories.map((category) => (
+            <article key={category.id} className="rounded-[8px] border border-black/10 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="truncate font-black">{category.name}</h3>
+                  <p className="mt-1 text-xs font-bold text-black/45">{category.slug} · #{category.sortOrder}</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-pak-cream px-2.5 py-1 text-[11px] font-black">
+                  {category.isActive ? "Активна" : "Отключена"}
+                </span>
+              </div>
+              {user.role === "OWNER" && (
+                <div className="mt-3">
+                  <CategoryActions id={category.id} isActive={category.isActive} />
+                </div>
+              )}
+            </article>
+          ))}
+          {categories.length === 0 && (
+            <div className="rounded-[8px] border border-dashed border-black/15 p-6 text-center text-sm font-semibold text-black/45">
+              Категорий пока нет.
+            </div>
+          )}
+        </div>
+        <div className="mt-4 hidden overflow-auto md:block">
           <table className="w-full min-w-[650px] text-left text-sm">
             <thead className="text-xs uppercase text-black/45">
               <tr>
@@ -80,7 +105,46 @@ export default async function AdminMenuPage() {
           <h2 className="text-lg font-black">Меню и цены</h2>
           <p className="mt-1 text-sm text-black/55">Обычная цена, себестоимость и цена для сета хранятся отдельно.</p>
         </div>
-        <div className="mt-4 overflow-auto">
+        <div className="mt-4 grid gap-3 md:hidden">
+          {items.map((item) => (
+            <article key={item.id} className="rounded-[8px] border border-black/10 p-3">
+              <div className="flex gap-3">
+                {item.imageUrl ? (
+                  <img src={item.imageUrl} alt={item.name} className="h-20 w-24 shrink-0 rounded-[8px] object-cover" />
+                ) : (
+                  <div className="grid h-20 w-24 shrink-0 place-items-center rounded-[8px] bg-pak-cream text-[11px] font-bold text-black/35">
+                    Нет фото
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <h3 className="line-clamp-2 font-black leading-tight">{item.name}</h3>
+                  <p className="mt-1 text-xs font-bold text-black/45">{item.category.name}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-black/60">
+                    <span><Price value={item.sellingPrice} /></span>
+                    <span className="rounded-full bg-pak-cream px-2 py-1">{item.isAvailable ? "В наличии" : "Нет"}</span>
+                    {item.isSetBuilderEnabled && <span className="rounded-full bg-pak-cream px-2 py-1">Собери сет</span>}
+                  </div>
+                </div>
+              </div>
+              {user.role === "OWNER" && (
+                <div className="mt-3">
+                  <MenuItemActions
+                    id={item.id}
+                    isAvailable={item.isAvailable}
+                    isActive={item.isActive}
+                    isSetBuilderEnabled={item.isSetBuilderEnabled}
+                  />
+                </div>
+              )}
+            </article>
+          ))}
+          {items.length === 0 && (
+            <div className="rounded-[8px] border border-dashed border-black/15 p-6 text-center text-sm font-semibold text-black/45">
+              Позиции меню пока не добавлены.
+            </div>
+          )}
+        </div>
+        <div className="mt-4 hidden overflow-auto md:block">
           <table className="w-full min-w-[1050px] text-left text-sm">
             <thead className="text-xs uppercase text-black/45">
               <tr>

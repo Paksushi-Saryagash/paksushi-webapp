@@ -83,7 +83,7 @@ export default async function OrderHistoryPage({ searchParams }: { searchParams:
         </form>
       </section>
 
-      <section className="grid gap-3 md:grid-cols-4">
+      <section className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
         <Metric title="Принятых" value={acceptedOrders.length} tone="dark" />
         <Metric title="Выручка" value={<Price value={revenue} />} tone="green" />
         <Metric title="Возвратов" value={refundedOrders.length} tone="yellow" />
@@ -167,9 +167,9 @@ function Metric({ title, value, tone }: { title: string; value: React.ReactNode;
   };
 
   return (
-    <div className={`rounded-[8px] p-5 shadow-sm ${tones[tone]}`}>
-      <p className="text-sm font-black uppercase text-black/45">{title}</p>
-      <div className="mt-2 text-3xl font-black">{value}</div>
+    <div className={`rounded-[8px] p-3 shadow-sm sm:p-5 ${tones[tone]}`}>
+      <p className="text-[11px] font-black uppercase leading-tight text-black/45 sm:text-sm">{title}</p>
+      <div className="mt-1 text-2xl font-black sm:mt-2 sm:text-3xl">{value}</div>
     </div>
   );
 }

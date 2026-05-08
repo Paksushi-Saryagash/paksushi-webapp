@@ -28,7 +28,7 @@ export default async function UsersPage() {
           В основном списке показываются только активные аккаунты. Если сотрудника нельзя удалить из-за истории заказов или смен, он отключается и уходит в архив ниже.
         </p>
 
-        <div className="mt-4 overflow-auto">
+        <div className="mt-4">
           <UsersTable users={activeUsers} emptyText="Активных сотрудников нет." />
         </div>
       </section>
@@ -39,7 +39,7 @@ export default async function UsersPage() {
           <h2 className="mt-1 text-xl font-black">Отключенные аккаунты</h2>
           <p className="mt-1 text-sm text-black/50">Эти сотрудники не могут войти в систему. Их можно включить обратно, если понадобится.</p>
 
-          <div className="mt-4 overflow-auto">
+          <div className="mt-4">
             <UsersTable users={disabledUsers} emptyText="Отключенных аккаунтов нет." muted />
           </div>
         </section>
@@ -62,6 +62,27 @@ function UsersTable({
   }
 
   return (
+    <>
+      <div className={`grid gap-3 md:hidden ${muted ? "opacity-75" : ""}`}>
+        {users.map((employee) => (
+          <article key={employee.id} className="rounded-[8px] border border-black/10 p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h3 className="truncate font-black">{employee.name}</h3>
+                <p className="mt-1 text-sm font-semibold text-black/55">{employee.login}</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-pak-cream px-2.5 py-1 text-[11px] font-black">
+                {employee.role === "OWNER" ? "Админ" : "Оператор"}
+              </span>
+            </div>
+            <p className="mt-2 text-xs font-bold text-black/45">{employee.isActive ? "Активен" : "Отключен"}</p>
+            <div className="mt-3">
+              <UserActions id={employee.id} isActive={employee.isActive} role={employee.role} />
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="hidden overflow-auto md:block">
     <table className="w-full min-w-[760px] text-left text-sm">
       <thead className="text-xs uppercase text-black/45">
         <tr>
@@ -86,5 +107,7 @@ function UsersTable({
         ))}
       </tbody>
     </table>
+      </div>
+    </>
   );
 }
